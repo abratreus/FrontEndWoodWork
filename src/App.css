@@ -1,0 +1,9 @@
+#root {
+  margin: 0 auto;
+  text-align: center;
+  padding: 0;
+}
+
+.oculto {
+  display: none !important; /* Remove completamente o elemento do layout */
+}
