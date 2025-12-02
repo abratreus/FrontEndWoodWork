@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Container, Alert } from 'react-bootstrap';
 import api from '../../services/api';
 import { Trash2, Edit, Plus } from 'lucide-react';
+import { useAlert } from '../../context/AlertContext';
 
 const AdminProdutos = () => {
+  const { showAlert } = useAlert();
+
   // Estados
   const [produtos, setProdutos] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const [error, setError] = useState('');
 
   // Modal States
   const [showModal, setShowModal] = useState(false);
@@ -43,7 +45,7 @@ const AdminProdutos = () => {
       setProdutos(prodResponse.data);
       setCategorias(catResponse.data);
     } catch (err) {
-      setError('Erro ao carregar dados.');
+      showAlert('Erro ao carregar dados.');
     }
   };
 
@@ -120,7 +122,7 @@ const AdminProdutos = () => {
   }
 
 
-  // 3. Salvar (CREATE ou UPDATE) 
+  // 3. Salvar (CREATE ou UPDATE)
   const prodHandleSave = async () => {
     try {
       const payload = {
@@ -130,35 +132,35 @@ const AdminProdutos = () => {
       };
       if (editingProduct) {
         // UPDATE (PUT)
-        await api.put(`/api/produtos/${editingProduct.id}`, formData);
-        alert('Produto atualizado!');
+        await api.put(`/api/produtos/${editingProduct.id}`, payload);
+        showAlert('Produto atualizado!');
       } else {
         // CREATE (POST)
-        await api.post('/api/produtos', formData);
-        alert('Produto criado!');
+        await api.post('/api/produtos', payload);
+        showAlert('Produto criado!');
       }
       setShowModal(false);
       fetchProdutos(); // Recarrega a lista
     } catch (err) {
       console.error(err);
-      alert('Erro ao salvar produto.');
+      showAlert('Erro ao salvar produto.', 'danger');
     }
   };
 
   const catHandleSave = async () => {
     if (!categoryFormData.nome) {
-      alert('O nome da categoria é obrigatório.');
+      showAlert('O nome da categoria é obrigatório.', 'warning');
       return;
     }
     try {
       if (editingCategory) {
         // UPDATE (PUT)
         await api.put(`/api/categorias/${editingCategory.id}`, categoryFormData);
-        alert('Categoria atualizada!');
+        showAlert('Categoria atualizada!');
       } else {
         // CREATE (POST)
         await api.post('/api/categorias', categoryFormData);
-        alert('Categoria criada!');
+        showAlert('Categoria criada!');
       }
       const catResponse = await api.get('/api/categorias');
       setCategorias(catResponse.data);
@@ -169,7 +171,7 @@ const AdminProdutos = () => {
 
     } catch (err) {
       console.error(err);
-      alert('Erro ao salvar categoria.');
+      showAlert('Erro ao salvar categoria.', 'danger');
     }
   };
   // 4. Deletar (DELETE - Hard Delete)
@@ -179,7 +181,7 @@ const AdminProdutos = () => {
         await api.delete(`/api/produtos/${id}`);
         fetchProdutos();
       } catch (err) {
-        alert('Erro ao excluir produto.');
+        showAlert('Erro ao excluir produto.', 'danger');
       }
     }
   };
@@ -191,35 +193,40 @@ const AdminProdutos = () => {
         const catResponse = await api.get('/api/categorias');
         setCategorias(catResponse.data);
       } catch (err) {
-        alert('Erro ao excluir categoria.');
+        showAlert('Erro ao excluir categoria.', 'danger');
       }
     }
   };
 
   // 5. Inativar (PATCH - Soft Delete) - Opcional, conforme sua rota
   const handleInactivate = async (id) => {
+    // Atualização otimista
+    setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 0 } : prod));
     try {
       await api.patch(`/api/produtos/${id}/inativar`);
-      fetchProdutos();
-      alert('Produto inativado.');
+      showAlert('Produto inativado.');
     } catch (err) {
-      alert('Erro ao inativar.');
+      // Reverter em caso de erro
+      setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 1 } : prod));
+      showAlert('Erro ao inativar.', 'danger');
     }
   }
   const handleActivate = async (id) => {
+    // Atualização otimista
+    setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 1 } : prod));
     try {
-      await api.put(`/api/produtos/${id}`, { ativo: 1 });
-      fetchProdutos();
-      alert('Produto ativado.');
+      await api.patch(`/api/produtos/${id}/ativar`);
+      showAlert('Produto ativado.');
     } catch (err) {
-      alert('Erro ao inativar.');
+      // Reverter em caso de erro
+      setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 0 } : prod));
+      showAlert('Erro ao ativar.', 'danger');
     }
   }
 
   return (
     <Container className="mt-5 pt-5">
       <h2 className="mb-4 pt-5">Gerenciar Produtos</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
 
       <Button variant="success" className="mb-3" onClick={() => handleOpenProductModal()}>
         <Plus size={18} /> Novo Produto
@@ -228,8 +235,8 @@ const AdminProdutos = () => {
         Gerenciar Categorias
       </Button>
 
-      <Table striped bordered hover responsive>
-        <thead>
+      <Table striped bordered hover className='shadow-sm'>
+        <thead className='table-dark'>
           <tr>
             <th>ID</th>
             <th>Nome</th>
@@ -249,18 +256,19 @@ const AdminProdutos = () => {
               <td>
                 <Form.Check className="mb-3"
                   type="switch"
-                  id="ativo-switch"
                   checked={prod.ativo === 1}
+                  onChange={(e) => (prod.ativo === 1 ? 
+                  handleInactivate(prod.id) : 
+                  handleActivate(prod.id))}
                 />
               </td>
               <td className='me-1'>
-                <Button variant="warning" size="sm" className="me-2" onClick={() => handleOpenProductModal(prod)}>
+                <Button variant="warning" size="sm" className="m-1" onClick={() => handleOpenProductModal(prod)}>
                   <Edit size={16} />
                 </Button>
-                <Button variant="danger" size="sm" className="me-2" onClick={() => prodHandleDelete(prod.id)}>
+                <Button variant="danger" size="sm" className="m-1" onClick={() => prodHandleDelete(prod.id)}>
                   <Trash2 size={16} />
                 </Button>
-                <Button variant="secondary" size="sm" className="me-2" onClick={() => prod.ativo === 1 ? handleInactivate(prod.id) : handleActivate(prod.id)}>{prod.ativo === 1 ? 'Inativar' : 'Ativar?'}</Button>
               </td>
             </tr>
           ))}
@@ -276,7 +284,7 @@ const AdminProdutos = () => {
         </Modal.Header>
         <Modal.Body>
           {modalView === 'produto' ? (
-            <Form>
+            <Form className='text-black'>
               {/* Nome */}
               <Form.Group className="mb-3">
                 <Form.Label>Nome</Form.Label>
@@ -328,7 +336,24 @@ const AdminProdutos = () => {
                   id="ativo-switch"
                   label="Ativo"
                   checked={formData.ativo === 1}
-                  onChange={(e) => setFormData({ ...formData, ativo: e.target.checked ? 1 : 0 })}
+                  onChange={async (e) => {
+                    const newAtivo = e.target.checked ? 1 : 0;
+                    setFormData({ ...formData, ativo: newAtivo });
+                    if (editingProduct) {
+                      try {
+                        if (newAtivo === 1) {
+                          await api.patch(`/api/produtos/${editingProduct.id}/ativar`);
+                        } else {
+                          await api.patch(`/api/produtos/${editingProduct.id}/inativar`);
+                        }
+                        showAlert(`Produto ${newAtivo === 1 ? 'ativado' : 'inativado'}.`);
+                        fetchProdutos(); // Atualiza a lista
+                      } catch (err) {
+                        showAlert('Erro ao atualizar status.', 'danger');
+                        setFormData({ ...formData, ativo: formData.ativo }); // Reverte
+                      }
+                    }
+                  }}
                 />
                 {/* Destaque */}
                 <Form.Check className="mb-3"
@@ -352,11 +377,7 @@ const AdminProdutos = () => {
               {/* Data de Criação */}
               <Form.Group className="mb-3">
                 <Form.Label>Data de Criação</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={formData.data_criacao}
-                  onChange={(e) => setFormData({ ...formData, data_criacao: e.target.value })}
-                />
+                <div>{new Date(formData.data_criacao).toLocaleString()}</div>
               </Form.Group>
             </Form>
           ) : modalView === 'categorias' ? (
