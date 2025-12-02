@@ -9,6 +9,7 @@ import AdminDashboard from './pages/Admin/AdminHome.jsx';
 import AdminProdutos from './pages/Admin/AdminProdutos';
 import AdminUsuarios from './pages/Admin/AdminUsuarios';
 import Footer from "./components/Footer.jsx";
+import { AlertProvider } from "./context/AlertContext.jsx";
 
 import "./App.css";
 
@@ -33,19 +34,21 @@ const LayoutComNavbar = ({ children }) => {
 function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <LayoutComNavbar>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/catalog" element={<Catalog />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/produtos" element={<AdminProdutos />} />
-            <Route path="/admin/usuarios" element={<AdminUsuarios />} />
-          </Routes>
-        </LayoutComNavbar>
-      </BrowserRouter>
+      <AlertProvider>
+        <BrowserRouter>
+          <LayoutComNavbar>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/catalog" element={<Catalog />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/produtos" element={<AdminProdutos />} />
+              <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+            </Routes>
+          </LayoutComNavbar>
+        </BrowserRouter>
+      </AlertProvider>
     </ErrorBoundary>
   );
 }
