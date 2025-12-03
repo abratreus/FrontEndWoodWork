@@ -1,11 +1,10 @@
 import React from 'react';
+import imagem from '../assets/logo.ico'
 
 function ProductCard({ produto }) {
 
-  const imagem = produto.url_imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem';
-
   return (
-    <div className="bg-white border rounded-lg shadow hover:shadow-lg transition overflow-hidden">
+    <div className="bg-white border rounded-lg shadow hover:shadow-lg transition overflow-hidden rounded">
       <img src={imagem} alt={produto.nome} className="w-full h-48 object-cover" />
       <div className="p-4">
         <h3 className="font-bold text-lg mb-1">{produto.nome}</h3>
