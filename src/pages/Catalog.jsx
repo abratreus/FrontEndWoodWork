@@ -13,6 +13,7 @@ function Catalog() {
 
   const handleClearSearch = () => {
     setSearchTerm('');
+    setSelectedCategory('')
   };
 
   // Fetch products and categories
@@ -26,7 +27,7 @@ function Catalog() {
         setProducts(productsResponse.data.filter(product => product.ativo === 1)); // Only active products
         setCategories(categoriesResponse.data);
       } catch (err) {
-        setAlert('Erro ao carregar produtos. Tente novamente mais tarde.');
+        showAlert('Erro ao carregar produtos. Tente novamente mais tarde.');
         console.showAlert('Error fetching data:', err);
       }
     };
@@ -71,7 +72,7 @@ function Catalog() {
           />
         </Col>
         <Col md={2}>
-          <Button variant="secondary" onClick={() => { setSearchTerm(''); setSelectedCategory(''); }} className="w-100">Limpar</Button>
+          <Button variant="secondary" onClick={() => { handleClearSearch; }} className="w-100">Limpar</Button>
         </Col>
       </Row>
       <Row>

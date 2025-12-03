@@ -7,12 +7,14 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import loginImage from '../assets/conta_image.jpeg';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { useAlert } from '../context/AlertContext'
 
 const Register = () => {
-  const [credentials, setCredentials] = useState({ nome_completo: '', email: '', senha: '', contact: '', contactValue: '' });
+  const [credentials, setCredentials] = useState({ nome_completo: '', email: '', senha: '', ativo: ''  });
   const [captchaToken, setCaptchaToken] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -38,10 +40,11 @@ const Register = () => {
         email: credentials.email,
         senha: credentials.senha,
         tipo_perfil: 'cliente',
+        ativo: credentials.ativo
       };
 
-      const response = await api.post('/api/usuarios', formData);
-
+      const response = await api.post('/api/auth/register', formData);
+      showAlert('Cadastro Realizado, Faça o Login')
       if (response.status === 201) {
         setSuccess(true);
         setTimeout(() => navigate('/'), 2000);

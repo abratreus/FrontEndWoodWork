@@ -19,15 +19,17 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (email, password) => {
+    const login = async (email, senha, originUrl = '/') => {
 
-        const response = await api.post('/api/usuarios', { email, password });
+        const response = await api.post('/api/auth/login', { email, senha, originUrl });
 
-        const { token, user } = response.data;
+        const { token, user: userData, redirectUrl } = response.data;
 
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        setUser(user);
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+
+        return (redirectUrl === '/' ? '/home' : redirectUrl);
     };
 
     const logout = () => {

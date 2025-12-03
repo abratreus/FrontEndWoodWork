@@ -46,6 +46,10 @@
   padding: 20% 20% 20% 20%;
 }
 
+.login-form Form.Label{
+  margin-bottom: 0rem;
+}
+
 @media (max-width: 991px) and (min-width: 769px) {
   .login-form {
     padding: 10vh 10vh 10vh 10vh;

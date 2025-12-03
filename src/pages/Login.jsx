@@ -8,21 +8,29 @@ import Col from 'react-bootstrap/Col';
 
 const Login = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setSenha] = useState('');
   const [error, setError] = useState(null);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const handleEsqueciASenha = async (e) =>{
+    
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    console.log("Form submitted with email:", email, "senha:", senha);
 
     try {
-      await login(email, password);
-      navigate('/home');
+      const originUrl = window.location.pathname;
+      console.log("Calling login with:", email, senha, originUrl);
+      const redirectUrl = await login(email, senha, originUrl);
+      console.log("Login successful, redirectUrl:", redirectUrl);
+      navigate(redirectUrl);
     } catch (err) {
-      setError(err.response?.data?.message || 'Erro ao tentar fazer login. Tente novamente.');
       console.error("Erro no Login:", err);
+      setError(err.response?.data?.message || 'Erro ao tentar fazer login. Tente novamente.');
     }
   };
 
@@ -53,11 +61,11 @@ const Login = () => {
             />
 
             <input
-              type="password"
-              name="password"
+              type="Password"
+              name="senha"
               placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
               required
               className="form-control mb-3"
             />
@@ -68,8 +76,8 @@ const Login = () => {
               </button>
             </div>
             <div className="d-flex flex-row gap-2 w-100 justify-content-between">
-              <span className="text-secondary">Entrar como visitante</span>
-              <span className="text-secondary">Esqueci minha senha</span>
+              <span ><Link to="/home" className="btn text-decoration-none text-secondary" > Entrar como visitante </Link></span>
+              <span className="text-secondary btn text-decoration-none">Esqueci minha senha</span>
             </div>
             {error && <div className="alert alert-danger me-3 d-flex align-items-center" role="alert"><i className="bi bi-exclamation-triangle me-2"></i>{error}</div>}
           </form>
