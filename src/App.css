@@ -5,5 +5,5 @@
 }
 
 .oculto {
-  display: none !important; /* Remove completamente o elemento do layout */
+  display: none !important;
 }

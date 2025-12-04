@@ -16,7 +16,6 @@ function Catalog() {
     setSelectedCategory('')
   };
 
-  // Fetch products and categories
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,7 +23,7 @@ function Catalog() {
           api.get('/api/produtos'),
           api.get('/api/categorias')
         ]);
-        setProducts(productsResponse.data.filter(product => product.ativo === 1)); // Only active products
+        setProducts(productsResponse.data.filter(product => product.ativo === 1)); 
         setCategories(categoriesResponse.data);
       } catch (err) {
         showAlert('Erro ao carregar produtos. Tente novamente mais tarde.');
@@ -35,7 +34,6 @@ function Catalog() {
     fetchData();
   }, []);
 
-  // Filter products based on search term and category
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.descricao_detalhada.toLowerCase().includes(searchTerm.toLowerCase());

@@ -44,7 +44,7 @@ const AdminUsuarios = () => {
 
       const userPayload = { ...formData };
 
-      // PUT: Atualizar
+      // PUT
       await api.put(`/api/usuarios/${formData.id}`, userPayload);
       showAlert('Usuário atualizado com sucesso.');
 

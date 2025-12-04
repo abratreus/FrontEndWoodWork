@@ -29,7 +29,7 @@ export const AlertProvider = ({ children }) => {
         <div
           style={{
             position: 'fixed',
-            top: '80px', // Below the fixed navbar (assuming navbar height ~70px)
+            top: '80px',
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 1050,

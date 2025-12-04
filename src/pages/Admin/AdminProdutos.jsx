@@ -35,7 +35,7 @@ const AdminProdutos = () => {
     descricao: ''
   });
 
-  // 1. Carregar Produtos (READ)
+  // (READ)
   const fetchProdutos = async () => {
     try {
       const [prodResponse, catResponse] = await Promise.all([
@@ -58,7 +58,7 @@ const AdminProdutos = () => {
     return categoria ? categoria.nome : 'N/A';
   }
 
-  // 2. Abrir Modal (Para Criar ou Editar)
+  // Abrir Modal (Criar ou Editar)
   const handleOpenProductModal = (produto = null) => {
     setModalView('produto');
     setEditingProduct(produto);
@@ -140,7 +140,7 @@ const AdminProdutos = () => {
         showAlert('Produto criado!');
       }
       setShowModal(false);
-      fetchProdutos(); // Recarrega a lista
+      fetchProdutos();
     } catch (err) {
       console.error(err);
       showAlert('Erro ao salvar produto.', 'danger');
@@ -154,11 +154,11 @@ const AdminProdutos = () => {
     }
     try {
       if (editingCategory) {
-        // UPDATE (PUT)
+        // (PUT)
         await api.put(`/api/categorias/${editingCategory.id}`, categoryFormData);
         showAlert('Categoria atualizada!');
       } else {
-        // CREATE (POST)
+        // (POST)
         await api.post('/api/categorias', categoryFormData);
         showAlert('Categoria criada!');
       }
@@ -174,7 +174,7 @@ const AdminProdutos = () => {
       showAlert('Erro ao salvar categoria.', 'danger');
     }
   };
-  // 4. Deletar (DELETE - Hard Delete)
+  // (DELETE - Hard Delete)
   const prodHandleDelete = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir este produto permanentemente?')) {
       try {
@@ -198,27 +198,25 @@ const AdminProdutos = () => {
     }
   };
 
-  // 5. Inativar (PATCH - Soft Delete) - Opcional, conforme sua rota
+  //(Soft Delete)
   const handleInactivate = async (id) => {
-    // Atualização otimista
     setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 0 } : prod));
     try {
       await api.patch(`/api/produtos/${id}/inativar`);
       showAlert('Produto inativado.');
     } catch (err) {
-      // Reverter em caso de erro
-      setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 1 } : prod));
+    setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 1 } : prod));
       showAlert('Erro ao inativar.', 'danger');
     }
   }
   const handleActivate = async (id) => {
-    // Atualização otimista
+
     setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 1 } : prod));
     try {
       await api.patch(`/api/produtos/${id}/ativar`);
       showAlert('Produto ativado.');
     } catch (err) {
-      // Reverter em caso de erro
+
       setProdutos(prev => prev.map(prod => prod.id === id ? { ...prod, ativo: 0 } : prod));
       showAlert('Erro ao ativar.', 'danger');
     }
@@ -347,10 +345,10 @@ const AdminProdutos = () => {
                           await api.patch(`/api/produtos/${editingProduct.id}/inativar`);
                         }
                         showAlert(`Produto ${newAtivo === 1 ? 'ativado' : 'inativado'}.`);
-                        fetchProdutos(); // Atualiza a lista
+                        fetchProdutos(); 
                       } catch (err) {
                         showAlert('Erro ao atualizar status.', 'danger');
-                        setFormData({ ...formData, ativo: formData.ativo }); // Reverte
+                        setFormData({ ...formData, ativo: formData.ativo }); 
                       }
                     }
                   }}

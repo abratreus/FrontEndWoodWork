@@ -9,11 +9,10 @@ export default function NavBar() {
   const location = useLocation();
   const { authenticated, logout } = useContext(AuthContext);
 
-  // Verifica se está em uma página de admin
   const isAdminPage = location.pathname.startsWith('/admin');
 
   return (
-    <Navbar expand="md" fixed="top" className="shadow p-3 mb-5 bg-white rounded navbar">
+    <Navbar expand="md" fixed="top" className="shadow-sm p-3 mb-5 bg-white rounded navbar">
       <Container>
         <Navbar.Brand as={Link} to={isAdminPage ? "/admin" : "/"}>
           <Row className="align-items-center m-0 p-0 g-0 mb-0">
@@ -35,9 +34,8 @@ export default function NavBar() {
             ) : (
               // Links Normais
               <>
-                <Nav.Link as={NavLink} to="/catalog">Catálogo</Nav.Link>
-                <Nav.Link as={NavLink} to="/sobre">Sobre</Nav.Link>
-                <Nav.Link as={NavLink} to="/contato">Contato</Nav.Link>
+                <Nav.Link as={NavLink} to="/catalogo">Catálogo</Nav.Link>
+                <Nav.Link as={NavLink} to="/home" end>Home</Nav.Link>
 
                 <NavDropdown title="Conta" id="nav-dropdown">
                   {authenticated ? (

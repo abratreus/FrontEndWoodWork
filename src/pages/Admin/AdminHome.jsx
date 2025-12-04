@@ -5,9 +5,9 @@ import { Users, Package, MailCheck, ShoppingCart } from 'lucide-react';
 
 const AdminHome = () => {
   return (
-    <Container className="mt-5">
-      <h1 className="mb-4 text-center">Painel Administrativo</h1>
-      <Row className="justify-content-center">
+    <Container className=" position-absolute top-50 start-50 translate-middle">
+      <h1 className="mb-4 text-center ">Painel Administrativo</h1>
+      <Row className="justify-content-center pt-3">
         <Col md={6} lg={6} className="mb-3">
           <Card className="text-center h-100 shadow-sm">
             <Card.Body >

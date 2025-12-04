@@ -1,3 +1,17 @@
+.imagem-home{
+  background-image: url('../assets/conta_image.jpeg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 50rem;
+  gap: 3rem;
+}
+
+.text-grande{
+  font-size: xx-large;
+}
+
 .login-container {
   min-height: 100vh;
   padding-left: 0px !important;

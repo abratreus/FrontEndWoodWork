@@ -102,7 +102,7 @@ const Register = () => {
             />
 
             <ReCAPTCHA
-              sitekey="6Le9FAEsAAAAAEXhZq-lMDgvu9y3Wm1laJbZgCYq" // Chave real do Google reCAPTCHA
+              sitekey="6Le9FAEsAAAAAEXhZq-lMDgvu9y3Wm1laJbZgCYq"
               onChange={handleCaptchaChange}
               className="mb-3"
             />
